@@ -90,3 +90,13 @@ ROBOTSTXT_OBEY = True
 # Set settings whose default value is deprecated to a future-proof value
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+
+################
+### SELENIUM ###
+################
+from shutil import which
+
+SELENIUM_DRIVER_NAME = 'chrome'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which("chromedriver")  # Ou le chemin vers ton WebDriver
+SELENIUM_DRIVER_ARGUMENTS=['--headless', '--no-sandbox', '--disable-dev-shm-usage']  # Mode sans interface graphique

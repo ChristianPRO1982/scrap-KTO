@@ -1,1 +1,4 @@
 scrapy
+scrapy-selenium
+selenium
+webdriver-manager
