@@ -16,8 +16,8 @@ class SiteCatholiqueSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url, headers=common_headers)
+            yield scrapy.Request(url, headers=common_headers())
     
 
-    def parse(self, response):
-        print(">>>>>", response.url)
+    def parse(self, response, niveau=1):
+        print(">>>>>", response.url, niveau)
