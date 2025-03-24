@@ -11,10 +11,10 @@ class SiteCatholiqueSpider(scrapy.Spider):
     allowed_domains = ["site-catholique.fr"]
     start_urls = [
         "https://site-catholique.fr/?Prieres",
-        "https://site-catholique.fr/?Chapelets",
-        "https://site-catholique.fr/?Chemins-de-Croix",
-        "https://site-catholique.fr/?Sacrements",
-        "https://site-catholique.fr/?Humour",
+        # "https://site-catholique.fr/?Chapelets",
+        # "https://site-catholique.fr/?Chemins-de-Croix",
+        # "https://site-catholique.fr/?Sacrements",
+        # "https://site-catholique.fr/?Humour",
         ]
 
     def start_requests(self):
@@ -25,7 +25,7 @@ class SiteCatholiqueSpider(scrapy.Spider):
             driver.get(url)
             
             # Scroll
-            for _ in range(50):  
+            for _ in range(200):  
                 driver.find_element(By.TAG_NAME, "body").send_keys(Keys.END)
                 time.sleep(3)
 
