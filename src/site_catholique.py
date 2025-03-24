@@ -68,13 +68,18 @@ if __name__ == "__main__":
     file_path = "./output/site_catholique.json"
     data = load_json(file_path)
     
-    for item in data:
-        db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
-        db.connect()
+    db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
+    db.connect()
 
-        with open(f'./output/{item["query_text"]}.txt', 'w', encoding='utf-8') as file:
+    for item in data:
+        virgule = ""
+
+        with open(f'./output/dsc_{item["query_text"]}.json', 'w', encoding='utf-8') as file:
+            file.write('[\n')
             for url in urls(item["html"]):
                 if db.insert_doc_site_catholique(f"https://site-catholique.fr{url}", f"{item['query_text']}"):
-                    file.write(f"'https://site-catholique.fr{url}'" + '\n')
+                    file.write(virgule + "{" + f'"url": "https://site-catholique.fr{url}"' + "}")
+                    virgule = ",\n"
+            file.write('\n]')
         
-        db.close()
+    db.close()
