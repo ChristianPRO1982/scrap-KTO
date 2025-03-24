@@ -2,3 +2,8 @@ scrapy
 scrapy-selenium
 selenium
 webdriver-manager
+bs4
+mysql
+mysqlclient
+mysql-connector-python
+python-dotenv

@@ -11,10 +11,10 @@ class SiteCatholiqueSpider(scrapy.Spider):
     allowed_domains = ["site-catholique.fr"]
     start_urls = [
         "https://site-catholique.fr/?Prieres",
-        # "https://site-catholique.fr/?Chapelets",
-        # "https://site-catholique.fr/?Chemins-de-Croix",
-        # "https://site-catholique.fr/?Sacrements",
-        # "https://site-catholique.fr/?Humour",
+        "https://site-catholique.fr/?Chapelets",
+        "https://site-catholique.fr/?Chemins-de-Croix",
+        "https://site-catholique.fr/?Sacrements",
+        "https://site-catholique.fr/?Humour",
         ]
 
     def start_requests(self):
@@ -31,12 +31,13 @@ class SiteCatholiqueSpider(scrapy.Spider):
 
             # Récupérer tout le HTML et le nettoyer
             page_source = html.unescape(driver.page_source)
-            driver.quit()
 
-            # Passer le HTML à Scrapy pour parsing
-            response = HtmlResponse(url=url, body=page_source, encoding='utf-8')
-            yield from self.parse(response)
+            query_text = url.split("?")[1]
 
-    def parse(self, response):
-        for link in response.css("div#content-container div a::attr(href)").getall():
-            yield {'href': f"https://site-catholique.fr{link}"}
+            yield {
+                "url": url,
+                "query_text": query_text,
+                "html": page_source
+            }
+
+        driver.quit()
