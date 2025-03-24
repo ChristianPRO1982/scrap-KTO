@@ -33,13 +33,13 @@ class Database:
             database=self.database
         )
 
-    def update(self, url, content):
+    def insert_or_update(self, url, term, definition):
         cursor = self.connection.cursor()
-        query = "UPDATE doc_site_catholique SET text = %s WHERE url = %s"
+        query = "INSERT INTO doc_glossaire (url, term, definition) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE definition = %s"
         try:
-            cursor.execute(query, (content, url))
+            cursor.execute(query, (url, term, definition, definition))
             self.connection.commit()
-            print(f"URL '{url}' updated successfully")
+            print(f"Term '{term}' updated successfully")
             return True
         except mysql.connector.Error as error:
             print(f"Error >>> {error}")
@@ -52,14 +52,14 @@ class Database:
 
 
 if __name__ == "__main__":
-    file_path = "./output/site_catholique_article.json"
+    file_path = "./output/glossaire.json"
     data = load_json(file_path)
     
     db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
     for item in data:
-
-        db.update((item["url"]), html_to_markdown(item["content"]))
+        print(">>>>>", item['term'])
+        db.insert_or_update(item['url'], item['term'], html_to_markdown(item['definition']))
         
     db.close()
