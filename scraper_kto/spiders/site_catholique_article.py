@@ -25,7 +25,7 @@ class SiteCatholiqueArticleSpider(scrapy.Spider):
                 yield scrapy.Request(
                     url=item['url'],
                     callback=self.parse,
-                    meta={'topic': dotjson}
+                    meta={'topic': dotjson, 'url': item['url']}
                 )
 
     def parse(self, response):
@@ -34,6 +34,7 @@ class SiteCatholiqueArticleSpider(scrapy.Spider):
             div = divs[0]
             yield {
                 'topic': response.meta['topic'],
+                'url': response.meta['url'],
                 'div_count': len(divs),
                 'content': div.get()
             }

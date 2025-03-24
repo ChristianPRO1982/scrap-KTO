@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import dotenv
 import os
+import html2text
 
 
 dotenv.load_dotenv(override=True)
@@ -13,22 +14,9 @@ def load_json(file_path):
         data = json.load(file)
     return data
 
-def urls(html)->list:
-    urls = []
 
-    # Remplacer \" par " si nécessaire
-    clean_html = html.replace(r'\"', '"')
-
-    # Parser avec BeautifulSoup
-    soup = BeautifulSoup(clean_html, "html.parser")
-
-    # Extraire toutes les URLs des balises <a>
-    urls = [a["href"] for a in soup.find_all("a", href=True)]
-
-    # Supprimer les 12 premières valeurs de 'urls'
-    urls = urls[12:]
-
-    return urls
+def html_to_markdown(html_content):
+    return html2text.html2text(html_content)
 
 class Database:
     def __init__(self, host, user, password, database):
@@ -46,13 +34,13 @@ class Database:
             database=self.database
         )
 
-    def insert_doc_site_catholique(self, url, type):
+    def update(self, url, content):
         cursor = self.connection.cursor()
-        insert_query = "INSERT INTO doc_site_catholique (url, type) VALUES (%s, %s)"
+        query = "UPDATE doc_site_catholique SET text = %s WHERE url = %s"
         try:
-            cursor.execute(insert_query, (url, type))
+            cursor.execute(query, (content, url))
             self.connection.commit()
-            print(f"URL '{url}' inserted successfully")
+            print(f"URL '{url}' updated successfully")
             return True
         except mysql.connector.Error as error:
             print(f"Error >>> {error}")
@@ -70,9 +58,9 @@ if __name__ == "__main__":
     
     db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
     db.connect()
-
+    
     for item in data:
 
-        print(item)
+        db.update((item["url"]), html_to_markdown(item["content"]))
         
     db.close()

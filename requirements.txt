@@ -7,3 +7,4 @@ mysql
 mysqlclient
 mysql-connector-python
 python-dotenv
+html2text
