@@ -16,6 +16,48 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `doc_choralepolefontainebleau`
+--
+
+DROP TABLE IF EXISTS `doc_choralepolefontainebleau`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `doc_choralepolefontainebleau` (
+  `dc_id` mediumint NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category1` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reference` text COLLATE utf8mb4_unicode_ci,
+  `lyrics` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`dc_id`),
+  UNIQUE KEY `doc_choralepolefontainebleau_unique` (`url`),
+  KEY `doc_choralepolefontainebleau_title_IDX` (`title`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `doc_evangelizo_prayers`
+--
+
+DROP TABLE IF EXISTS `doc_evangelizo_prayers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `doc_evangelizo_prayers` (
+  `dep_id` mediumint NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`dep_id`),
+  UNIQUE KEY `doc_evangelizo_prayers_unique` (`url`),
+  KEY `doc_evangelizo_prayers_category_IDX` (`category`) USING BTREE,
+  KEY `doc_evangelizo_prayers_title_IDX` (`title`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `doc_glossaire`
 --
 
@@ -60,4 +102,4 @@ CREATE TABLE `doc_site_catholique` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-24 15:46:21
+-- Dump completed on 2025-03-25 16:49:19
