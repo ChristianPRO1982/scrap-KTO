@@ -83,7 +83,6 @@ if __name__ == "__main__":
     for file in file_path:
         data = load_json(file)
         for item in data:
-            # print(">>>>>", item['title'])
             action = db.insert_or_update(
                 item['url'],
                 item['title'],
@@ -97,6 +96,7 @@ if __name__ == "__main__":
                 i1 += 1
             elif action == 2:
                 i2 += 1
+                # print(">>>>>", item['title'])
     
     print(f"Total inserted: {i1}")
     print(f"Total updated: {i2}")
