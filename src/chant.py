@@ -35,15 +35,31 @@ class Database:
 
     def insert_or_update(self, url, title, category1, category2, author, reference, lyrics_html, lyrics_md):
         cursor = self.connection.cursor()
-        query = "INSERT INTO doc_choralepolefontainebleau (url, title, category1, category2, author, reference, lyrics_html) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE title = %s, category1 = %s, category2 = %s, author = %s, reference = %s, lyrics_html = %s, lyrics_md = %s"
+        query = "INSERT INTO doc_choralepolefontainebleau (url, title, category1, category2, author, reference, lyrics_html, lyrics_md) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         try:
-            cursor.execute(query, (url, title, category1, category2, author, reference, lyrics_html, lyrics_md, title, category1, category2, author, reference, lyrics_html, lyrics_md))
+            cursor.execute(query, (url, title, category1, category2, author, reference, lyrics_html, lyrics_md))
             self.connection.commit()
-            print(f"'{title}' updated successfully")
-            return True
+            # print(f"'{title}' updated successfully")
+            return 1
         except mysql.connector.Error as error:
-            print(f"Error >>> {error}")
-            return False
+            query = """
+UPDATE doc_choralepolefontainebleau
+   SET title = %s,
+       category1 = %s,
+       category2 = %s,
+       author = %s,
+       reference = %s,
+       lyrics_html = %s,
+       lyrics_md = %s
+ WHERE url = %s
+"""
+            try:
+                cursor.execute(query, (title, category1, category2, author, reference, lyrics_html, lyrics_md, url))
+                self.connection.commit()
+                return 2
+            except mysql.connector.Error as error:
+                print(f"Error >>> {error}")
+                return 0
         cursor.close()
 
     def close(self):
@@ -62,11 +78,13 @@ if __name__ == "__main__":
     db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
+    i1 = 0
+    i2 = 0
     for file in file_path:
         data = load_json(file)
         for item in data:
-            print(">>>>>", item['title'])
-            db.insert_or_update(
+            # print(">>>>>", item['title'])
+            action = db.insert_or_update(
                 item['url'],
                 item['title'],
                 item['category1'],
@@ -75,5 +93,11 @@ if __name__ == "__main__":
                 item['reference'],
                 item['lyrics'],
                 html_to_markdown(item['lyrics']))
-        
+            if action == 1:
+                i1 += 1
+            elif action == 2:
+                i2 += 1
+    
+    print(f"Total inserted: {i1}")
+    print(f"Total updated: {i2}")
     db.close()
