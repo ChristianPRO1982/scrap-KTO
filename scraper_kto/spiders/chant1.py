@@ -11,7 +11,7 @@ class Chant1Spider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        h1 = response.css("h1::text").get()  # Récupère le titre principal de la page
+        category1 = response.css("h1::text").get()  # Récupère le titre principal de la page
 
         # Vérifie si <tbody> existe
         tbody = response.css("tbody")
@@ -27,19 +27,20 @@ class Chant1Spider(scrapy.Spider):
 
             href = tds[0].css("a::attr(href)").get()
             title = tds[0].css("a::text").get()
-            category = tds[1].css("::text").get()
+            category2 = tds[1].css("::text").get()
             author = tds[2].css("::text").get()
 
             yield response.follow(
                 href,
                 callback=self.parse_chant,
-                meta={"title": title, "category": category, "author": author},
+                meta={"title": title, "category1": category1, "category2": category2, "author": author},
                 )
             # break
     
     def parse_chant(self, response):
         title = response.meta.get("title")
-        category = response.meta.get("category")
+        category1 = response.meta.get("category1")
+        category2 = response.meta.get("category2")
         author = response.meta.get("author")
 
         h4 = response.css("h4::text").get()
@@ -54,8 +55,8 @@ class Chant1Spider(scrapy.Spider):
         yield {
             "title": title.strip() if title else "N/A",
             "url": response.url,
-            "category1": "Répertoire des Enfants",
-            "category2": category.strip() if category else "N/A",
+            "category1": category1.strip() if category1 else "N/A",
+            "category2": category2.strip() if category2 else "N/A",
             "author": author.strip() if author else "N/A",
             "reference": h4.strip() + "\n\n" + p.strip() if h4 and p else "N/A",
             "lyrics": lyrics.strip() if lyrics else "N/A",
