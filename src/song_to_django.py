@@ -177,7 +177,7 @@ if __name__ == "__main__":
         category1 = result[3].lower()
         category2 = result[4].lower()
         author = result[5]
-        reference = result[6]
+        reference = html_to_markdown(result[6])
 
         db.insert_or_update_song(title, reference, author)
         db.insert_url(title, url)
