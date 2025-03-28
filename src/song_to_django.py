@@ -30,7 +30,10 @@ class extract_verses:
             num, pos1, pos2 = self.num_verse()
             if num:
                 self.cut_text(pos1)
-                self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.text[:pos2].strip()})
+                if pos1 < pos2:
+                    self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.text[:pos2].strip()})
+                else:
+                    self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.text.strip()})
                 self.cut_text(pos2)
                 # print("verse")
             else:
@@ -50,7 +53,7 @@ class extract_verses:
         pos2 = self.text.find('**', pos1 + 2 + 2)
         num_txt = self.text[(pos + 2):(pos+6)]
         try:
-            num = int(num_txt.strip('*. '))
+            num = int(num_txt.strip('*. -'))
         except:
             num = None
         return num, pos1, pos2 - pos1 - 1
@@ -58,7 +61,10 @@ class extract_verses:
     def extract_chorus(self)->str:
         pos1 = self.text.find('**')
         pos2 = self.text.find('**', pos1 + 2) + 2
-        chorus = self.text[pos1+2:pos2-2].strip()
+        if pos1 < pos2:
+            chorus = self.text[pos1+2:pos2-2].strip()
+        else:
+            chorus = self.text[pos1+2:].strip()
         self.cut_text(pos2)
         return chorus
     
@@ -169,7 +175,7 @@ if __name__ == "__main__":
     db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
-    query = "SELECT * FROM doc_choralepolefontainebleau"
+    query = "SELECT * FROM doc_choralepolefontainebleau WHERE dc_id = 2010"
     results = db.select(query)
     for result in results:
         url = result[1]
