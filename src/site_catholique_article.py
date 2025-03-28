@@ -39,10 +39,10 @@ class Database:
         try:
             cursor.execute(query, (content, url))
             self.connection.commit()
-            print(f"URL '{url}' updated successfully")
+            # print(f"URL '{url}' updated successfully")
             return True
         except mysql.connector.Error as error:
-            print(f"Error >>> {error}")
+            print(f"Error >>> {error} / url: {url}")
             return False
         cursor.close()
 

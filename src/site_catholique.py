@@ -52,10 +52,14 @@ class Database:
         try:
             cursor.execute(insert_query, (url, type))
             self.connection.commit()
-            print(f"URL '{url}' inserted successfully")
+            # print(f"URL '{url}' inserted successfully")
             return True
         except mysql.connector.Error as error:
-            print(f"Error >>> {error}")
+            if "Duplicate entry" in str(error):
+                # print(f"URL '{url}' already exists")
+                pass
+            else:
+                print(f"Error >>> {error}")
             return False
         cursor.close()
 
