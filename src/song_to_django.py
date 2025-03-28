@@ -175,7 +175,7 @@ if __name__ == "__main__":
     db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
-    query = "SELECT * FROM doc_choralepolefontainebleau WHERE dc_id = 2010"
+    query = "SELECT * FROM doc_choralepolefontainebleau"
     results = db.select(query)
     for result in results:
         url = result[1]
