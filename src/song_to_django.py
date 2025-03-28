@@ -202,7 +202,7 @@ UPDATE l_songs
             query = """
 UPDATE l_songs
    SET description = ''
- WHERE description LIKE '0%'
+ WHERE description LIKE '%N/A%'
 """
             cursor.execute(query)
         except mysql.connector.Error as error:
@@ -245,7 +245,7 @@ if __name__ == "__main__":
                 chorus = 1
             db.insert_verse(title, verse['verse_pos'], chorus, verse['text'])
         
-        db.clean()
         # break
     
+    db.clean()
     db.close()
