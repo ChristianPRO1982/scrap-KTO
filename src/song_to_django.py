@@ -166,6 +166,48 @@ UPDATE l_songs
                 if not 'Duplicate entry2' in str(error):
                     print(f"Error >>> {error}")
 
+    def clean(self):
+        cursor = self.connection.cursor()
+
+        try:
+            query = """
+UPDATE l_songs
+   SET artist = ''
+ WHERE artist LIKE '0%'
+    OR artist LIKE '1%'
+    OR artist LIKE '2%'
+    OR artist LIKE '3%'
+    OR artist LIKE '4%'
+    OR artist LIKE '5%'
+    OR artist LIKE '6%'
+    OR artist LIKE '7%'
+    OR artist LIKE '8%'
+    OR artist LIKE '9%'
+ """
+            cursor.execute(query)
+        except mysql.connector.Error as error:
+            print(f"CLEAN 01 - Error >>> {error}")
+
+        try:
+            query = """
+UPDATE l_songs
+   SET artist = ''
+ WHERE artist LIKE '%N/A%'
+"""
+            cursor.execute(query)
+        except mysql.connector.Error as error:
+            print(f"CLEAN 02 - Error >>> {error}")
+        
+        try:
+            query = """
+UPDATE l_songs
+   SET description = ''
+ WHERE description LIKE '0%'
+"""
+            cursor.execute(query)
+        except mysql.connector.Error as error:
+            print(f"CLEAN 03 - Error >>> {error}")
+
     def close(self):
         if self.connection:
             self.connection.close()    
@@ -185,7 +227,7 @@ if __name__ == "__main__":
         author = result[5]
         reference = html_to_markdown(result[6])
 
-        db.insert_or_update_song(title, reference, author)
+        db.insert_or_update_song(title.strip(), reference.strip(), author)
         db.insert_url(title, url)
         category = category1 + " " + category2
         category = category.lower().split()
@@ -202,6 +244,8 @@ if __name__ == "__main__":
             else:
                 chorus = 1
             db.insert_verse(title, verse['verse_pos'], chorus, verse['text'])
+        
+        db.clean()
         # break
     
     db.close()
