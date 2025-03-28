@@ -75,7 +75,7 @@ if __name__ == "__main__":
         "./output/chant2-1.json"
         ]
     
-    db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
+    db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
     i1 = 0

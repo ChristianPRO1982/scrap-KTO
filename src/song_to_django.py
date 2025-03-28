@@ -166,7 +166,7 @@ UPDATE l_songs
 
 
 if __name__ == "__main__":
-    db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
+    db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
     query = "SELECT * FROM doc_choralepolefontainebleau"

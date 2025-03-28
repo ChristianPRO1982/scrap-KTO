@@ -55,7 +55,7 @@ if __name__ == "__main__":
     file_path = "./output/site_catholique_article.json"
     data = load_json(file_path)
     
-    db = Database("localhost", "root", os.getenv('DB_PWD'), "carthographie")
+    db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
     for item in data:
