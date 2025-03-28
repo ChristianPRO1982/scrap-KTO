@@ -245,7 +245,7 @@ if __name__ == "__main__":
                 chorus = 1
             db.insert_verse(title, verse['verse_pos'], chorus, verse['text'])
         
+        db.clean()
         # break
     
-    db.clean()
     db.close()
