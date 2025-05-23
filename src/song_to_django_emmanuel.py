@@ -17,57 +17,51 @@ def load_json(file_path):
 def html_to_markdown(html_content):
     return html2text.html2text(html_content)
 
+import re
+
+import re
+
 class extract_verses:
     def __init__(self, text: str):
         self.text = text
+        self.cut_text(self.text.find('<p>'))
         self.verses = []
         self.verses_txt()
 
+
     def verses_txt(self):
         verse_pos = 0
-        while self.text.find('**') != -1:
+        # print(self.text)
+        while self.text.find('<p>') != -1 or self.text.find('<li>') != -1:
+            p_pos1 = self.text.find('<p>')
+            p_pos2 = self.text.find('</p>')
+            li_pos1 = self.text.find('<li>')
+            li_pos2 = self.text.find('</li>')
             verse_pos += 1
-            num, pos1, pos2 = self.num_verse()
-            if num:
-                self.cut_text(pos1)
-                if pos1 < pos2:
-                    self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.text[:pos2].strip()})
-                else:
-                    self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.text.strip()})
-                self.cut_text(pos2)
-                # print("verse")
+            if p_pos1 < li_pos1 or li_pos1 == -1:
+                pos1 = p_pos1
+                pos2 = p_pos2
+                plus = 3
             else:
-                self.verses.append({'verse_pos': verse_pos, 'verse': num, 'text': self.extract_chorus()})
-                # print("chorus")
-            
-            if verse_pos > 1000:
-                print("break")
-                break
-        
-        if verse_pos == 0:
-            self.verses.append({'verse_pos': verse_pos, 'verse': 1, 'text': self.text})
+                pos1 = li_pos1
+                pos2 = li_pos2
+                plus = 4
+                
+            if pos2 != -1:
+                verse = self.text[(pos1 + plus):pos2]
+                if verse.find('<strong>') != -1:
+                    chorus = True
+                else:
+                    chorus = None
+                verse_clean = re.sub(r'<br\s*/?>', '\n', verse)
+                verse_clean = re.sub(r'<.*?>', '', verse_clean)
+                verse_clean = re.sub(r'\n+', '\n', verse_clean)
+                self.verses.append({'verse_pos': verse_pos, 'verse': chorus, 'text': self.text[:pos2].strip()})
+                # print(verse_pos, verse_clean)
+            self.cut_text(pos2 + 4)
+            # break
 
-    def num_verse(self)->tuple:
-        pos = self.text.find('**')
-        pos1 = self.text.find('**', pos + 2) + 2
-        pos2 = self.text.find('**', pos1 + 2 + 2)
-        num_txt = self.text[(pos + 2):(pos+6)]
-        try:
-            num = int(num_txt.strip('*. -'))
-        except:
-            num = None
-        return num, pos1, pos2 - pos1 - 1
-    
-    def extract_chorus(self)->str:
-        pos1 = self.text.find('**')
-        pos2 = self.text.find('**', pos1 + 2) + 2
-        if pos1 < pos2:
-            chorus = self.text[pos1+2:pos2-2].strip()
-        else:
-            chorus = self.text[pos1+2:].strip()
-        self.cut_text(pos2)
-        return chorus
-    
+
     def cut_text(self, pos:int):
         self.text = self.text[pos:].strip()
 
@@ -217,25 +211,23 @@ if __name__ == "__main__":
     db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
-    query = "SELECT * FROM doc_emmanuel LIMIT 1"
+    query = "SELECT * FROM doc_emmanuel"
     results = db.select(query)
     for result in results:
-        url = result[1]
+        url = "https://www.emmanuelmusique.com"
         title = result[2]
         category1 = result[3].lower()
-        category2 = result[4].lower()
-        author = "La "
-        reference = html_to_markdown(result[6])
+        category2 = html_to_markdown(result[4].lower())
+        author = "L'Emmanuel"
 
-        db.insert_or_update_song(title.strip(), reference.strip(), author)
+        db.insert_or_update_song(title.strip(), category2, author)
         db.insert_url(title, url)
-        category = category1 + " " + category2
-        category = category.lower().split()
+        category = category1
         unique_words = set(category)
         for genre in unique_words:
             db.insert_genre(title, genre)
 
-        verses = extract_verses(result[8])
+        verses = extract_verses(result[5])
         for verse in verses.verses:
             # print()
             # print(verse)
