@@ -30,14 +30,14 @@ class Emmanuel2Spider(scrapy.Spider):
 
     def start_requests(self):
         urls = [
-                # "https://emmanuelmusic.net/rechercher/?_cat=1",
-                "https://emmanuelmusic.net/rechercher/?_cat=2",
-                "https://emmanuelmusic.net/rechercher/?_cat=3",
-                "https://emmanuelmusic.net/rechercher/?_cat=33",
-                "https://emmanuelmusic.net/rechercher/?_cat=6",
-                "https://emmanuelmusic.net/rechercher/?_cat=7",
-                "https://emmanuelmusic.net/rechercher/?_cat=52",
-                "https://emmanuelmusic.net/rechercher/?_cat=307",
+                "https://emmanuelmusic.net/rechercher/?_cat=1",
+                # "https://emmanuelmusic.net/rechercher/?_cat=2",
+                # "https://emmanuelmusic.net/rechercher/?_cat=3",
+                # "https://emmanuelmusic.net/rechercher/?_cat=33",
+                # "https://emmanuelmusic.net/rechercher/?_cat=6",
+                # "https://emmanuelmusic.net/rechercher/?_cat=7",
+                # "https://emmanuelmusic.net/rechercher/?_cat=52",
+                # "https://emmanuelmusic.net/rechercher/?_cat=307",
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
@@ -52,17 +52,17 @@ class Emmanuel2Spider(scrapy.Spider):
             href = h2.css("a::attr(href)").get()
             langue = h2.css("span").get()
             if "fi-fr" in langue or "fi-en" in langue:
-                # yield {
-                #     "genre": get_genre_name(int(cat_value)),
-                #     "langue": langue,
-                #     "href": href
-                # }
-                yield response.follow(
-                    href,
-                    callback=self.parse_chant,
-                    meta={"genre": get_genre_name(int(cat_value))},
-                )
-                # break;
+                yield {
+                    "genre": get_genre_name(int(cat_value)),
+                    "langue": langue,
+                    "href": href
+                }
+                # yield response.follow(
+                #     href,
+                #     callback=self.parse_chant,
+                #     meta={"genre": get_genre_name(int(cat_value))},
+                # )
+                break;
 
 
     def parse_chant(self, response):
