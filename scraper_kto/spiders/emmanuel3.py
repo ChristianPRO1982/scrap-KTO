@@ -16,8 +16,8 @@ def get_genre_name(genre_id):
     return genres.get(genre_id, "Genre inconnu")
 
 
-class Emmanuel2Spider(scrapy.Spider):
-    name = "emmanuel2"
+class Emmanuel3Spider(scrapy.Spider):
+    name = "emmanuel3"
     allowed_domains = ["emmanuelmusic.net"]
 
     custom_settings = {
@@ -52,17 +52,30 @@ class Emmanuel2Spider(scrapy.Spider):
             href = h2.css("a::attr(href)").get()
             langue = h2.css("span").get()
             if "fi-fr" in langue or "fi-en" in langue:
-                yield {
-                    "genre": get_genre_name(int(cat_value)),
-                    "langue": langue,
-                    "href": href
-                }
-                # yield response.follow(
-                #     href,
-                #     callback=self.parse_chant,
-                #     meta={"genre": get_genre_name(int(cat_value))},
-                # )
-                break;
+                # yield {
+                #     "genre": get_genre_name(int(cat_value)),
+                #     "langue": langue,
+                #     "href": href
+                # }
+                yield response.follow(
+                    href,
+                    callback=self.parse_album,
+                    meta={"genre": get_genre_name(int(cat_value))},
+                )
+                # break;
+
+
+    def parse_album(self, response):
+        divs = response.css("div.item-titre")
+
+        for div in divs:
+            href = div.css("a::attr(href)").get()
+            yield response.follow(
+                href,
+                callback=self.parse_chant,
+                meta={"genre": response.meta.get("genre")},
+            )
+            # break;
 
 
     def parse_chant(self, response):
@@ -71,20 +84,11 @@ class Emmanuel2Spider(scrapy.Spider):
         div_info = response.css("div.elementor-heading-title.elementor-size-medium").get()
         div_p = div_info.split("<p>")[1].split("</p>")[0]
         div1 = response.css("div.elementor-widget-woocommerce-product-content").get()
-        # div2 = div1.css("dev::text").get()
-        
-        # div_chant = div.css("div.chant-contenu")
-        # ps = div_chant.css("p")
-        # lyrics = ""
-        # for p in ps:
-        #     lyrics += p.get()
 
         yield {
             "title": title.strip() if title else "N/A",
             "url": response.url,
             "genre": genre,
             "info": div_p.strip() if div_p else "N/A",
-            # "category1": category1.strip() if category1 else "N/A",
-            # "category2": category2.strip() if category2 else "N/A",
             "lyrics": div1.strip() if div1 else "N/A",
         }
