@@ -217,14 +217,14 @@ if __name__ == "__main__":
     db = Database("localhost", os.getenv('DB_LOGIN'), os.getenv('DB_PWD'), "carthographie")
     db.connect()
     
-    query = "SELECT * FROM doc_choralepolefontainebleau"
+    query = "SELECT * FROM doc_emmanuel LIMIT 1"
     results = db.select(query)
     for result in results:
         url = result[1]
         title = result[2]
         category1 = result[3].lower()
         category2 = result[4].lower()
-        author = result[5]
+        author = "La "
         reference = html_to_markdown(result[6])
 
         db.insert_or_update_song(title.strip(), reference.strip(), author)
